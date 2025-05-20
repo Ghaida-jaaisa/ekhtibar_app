@@ -16,7 +16,10 @@ class ExamApp extends StatelessWidget {
           backgroundColor: Colors.grey,
           title: Text("اختبار",),
         ),
-        body: ExamPage(),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ExamPage(),
+        ),
       ),
     );
   }
@@ -32,12 +35,53 @@ class _ExamPageState extends State<ExamPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(child: Column(
+        Expanded(
+          flex: 6,
+          child: Column(
           children: [
-            Image.asset('images/image-1.jpg')
+            Image.asset('images/image-1.jpg') ,
+            SizedBox(height: 20.0,),
+            Text('عدد الكواكب في المجموعة الشمسية هو ثمانية كواكب ' ,
+              style: TextStyle(fontSize: 24.0),
+            textAlign: TextAlign.center,)
           ],
-        ))
+        ),
+        ), 
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ElevatedButton(
+              style:ElevatedButton.styleFrom(
+                backgroundColor: Colors.green
+              ),
+                onPressed: (){},
+                child: Text('صح' ,
+                style: TextStyle(
+                  fontSize: 22.0,
+                  color: Colors.black
+                ),)),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red
+
+              ),
+                onPressed: (){},
+                child: Text('خطأ' ,
+                  style: TextStyle(
+                      fontSize: 22.0 ,
+                    color: Colors.black
+                  ),)),
+          ),
+        ),
       ],
     );
   }
