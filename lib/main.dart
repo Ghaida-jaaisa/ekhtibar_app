@@ -1,6 +1,8 @@
-import 'package:ekhtibar_app/question.dart';
+import 'package:ekhtibar_app/AppBrain.dart';
+//import 'package:ekhtibar_app/question.dart';
 import 'package:flutter/material.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
+AppBrain appBrain = AppBrain();
 void main() {
   runApp(const ExamApp());
 }
@@ -34,74 +36,75 @@ class ExamPage extends StatefulWidget {
 }
 
 class _ExamPageState extends State<ExamPage> {
-
-  void checkAnswer(bool whatUserPicked) {
-    bool correctAnswer = questionGroup[questionNumber].questionAnswer;
-    Icon answer ;
-    (whatUserPicked == correctAnswer) ? answer = _correctAnswer :  answer = _falseAnswer;
-    setState(() {
-      questionNumber++;
-      answerResults.add(answer);
-    });
-  }
+// Variables
+  int rightAnswers = 0 ;
   List<Icon> answerResults = [];
   Icon _correctAnswer = Icon(Icons.thumb_up , color: Colors.green,);
   Icon _falseAnswer = Icon(Icons.thumb_down, color: Colors.red,);
 
-  List<String> questions = [
-    'عدد الكواكب في المجموعة الشمسية هو ثمانية كواكب' ,
-    'القطط هي حيوانات أليفة',
-    'الصين موجودة في القارة الإفريقية',
-    'الأرض مسطحة و ليست كروية '
-  ];
-  List<bool> answers = [
-    true,
-    true,
-    false,
-    false,
-  ];
-  List<String> questionImage = [
-    'images/image-1.jpg',
-    'images/image-2.jpg',
-    'images/image-3.jpg',
-    'images/image-4.jpg',
-    // 'images/image-5.jpg',
-    // 'images/image-6.jpg',
-    // 'images/image-7.jpg'
-  ];
-  List<Question> questionGroup = [
-    Question(
-        q: 'عدد الكواكب في المجموعة الشمسية هو ثمانية كواكب' ,
-        i: 'images/image-1.jpg',
-        a: true),
-    Question(
-        q: 'القطط هي حيوانات أليفة',
-        i: 'images/image-2.jpg',
-        a: true),
-    Question(
-        q: 'الصين موجودة في القارة الإفريقية',
-        i: 'images/image-3.jpg',
-        a: false),
-    Question(
-        q: 'الأرض مسطحة و ليست كروية',
-        i: 'images/image-4.jpg',
-        a: false),
-    Question(
-        q: 'باستطاعة الإنسان البقاء على قيد الحياة بدون أكل اللحوم',
-        i: 'images/image-5.jpg',
-        a: true),
-    Question(
-        q: 'الشمس تدور حول الأرض و الأرض  تدور حول القمر',
-        i: 'images/image-6.jpg',
-        a: true),
-    Question(
-        q: 'الحيوانات لا تشعر بالألم',
-        i: 'images/image-7.jpg',
-        a: false),
-  ];
+_onBasicAlertPressed (context) {
+ Alert(
+   context:  context,
+   title: "انتهاء الاختبار",
+   desc: "لقد أجبت $rightAnswers أسئلة صحيحة من أصل 7",
+   buttons: [DialogButton(
+       padding: EdgeInsets.all(5.0),
+       color: Colors.indigoAccent,
+        width: 120.0,
+       child: Text('ابدأ من جديد', style: TextStyle(fontSize: 20.0),),
+       onPressed: () {
+       Navigator.pop(context);
+       })
+   ]
+ ).show();
+ appBrain.reset();
+ answerResults = [];
+ rightAnswers = 0;
+}
 
-//  Question question1 = Question(q:'quesion',i:'images/image-2.jpg',a:true);
-  int questionNumber = 0;
+  void checkAnswer(bool whatUserPicked) {
+    bool correctAnswer = appBrain.getQustionAnswer();
+    Icon answer ;
+    if (whatUserPicked == correctAnswer) {
+      answer = _correctAnswer  ;
+      rightAnswers++;
+    }
+    else {
+      answer = _falseAnswer;}
+    setState(() {
+      appBrain.nextQuestion();
+      if (appBrain.isFinished()){
+        _onBasicAlertPressed(context);
+      }
+      else {
+        answerResults.add(answer);
+      }
+    });
+  }
+
+
+  // List<String> questions = [
+  //   'عدد الكواكب في المجموعة الشمسية هو ثمانية كواكب' ,
+  //   'القطط هي حيوانات أليفة',
+  //   'الصين موجودة في القارة الإفريقية',
+  //   'الأرض مسطحة و ليست كروية '
+  // ];
+  // List<bool> answers = [
+  //   true,
+  //   true,
+  //   false,
+  //   false,
+  // ];
+  // List<String> questionImage = [
+  //   'images/image-1.jpg',
+  //   'images/image-2.jpg',
+  //   'images/image-3.jpg',
+  //   'images/image-4.jpg',
+  //   // 'images/image-5.jpg',
+  //   // 'images/image-6.jpg',
+  //   // 'images/image-7.jpg'
+  // ];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -119,9 +122,9 @@ class _ExamPageState extends State<ExamPage> {
           flex: 6,
           child: Column(
           children: [
-            Image.asset(questionGroup[questionNumber].questionImage) ,
+            Image.asset(appBrain.getQuestionImage()) ,
             SizedBox(height: 20.0,),
-            Text(questionGroup[questionNumber].questionText,
+            Text(appBrain.getQuestionText(),
               style: TextStyle(fontSize: 24.0),
             textAlign: TextAlign.center,)
           ],
